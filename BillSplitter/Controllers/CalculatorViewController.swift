@@ -10,16 +10,14 @@ import UIKit
 class CalculatorViewController: UIViewController {
     
     
-    
-    
+    // Outlets
     @IBOutlet weak var billTextField: UITextField!
-    
     @IBOutlet weak var tipTextField: UITextField!
-    
     @IBOutlet weak var splitNumberLabel: UILabel!
     
-    
-    
+    //Variables
+    var totalSumPerPerson: Double = 0.0
+    var finalText: String = ""
     
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
         
@@ -46,12 +44,21 @@ class CalculatorViewController: UIViewController {
         let tipsAmount = Double((Double(tipTextField.text!) ?? 0.0)/100)
         let amountOfPersons = Int(splitNumberLabel.text!) ?? 0
         let totalSum = inputSum * tipsAmount + inputSum
-        let totalSumPerPerson = round(totalSum / Double(amountOfPersons) * 100) / 100.0
-        print("Sum \(totalSum) splitted betwen \(amountOfPersons) people, with \(Int(tipsAmount * 100)) %. Per person \(totalSumPerPerson)")
+        
+        totalSumPerPerson = round(totalSum / Double(amountOfPersons) * 100) / 100.0
+        finalText = "Sum \(totalSum) splitted betwen \(amountOfPersons) people, with \(Int(tipsAmount * 100)) %. Per person \(totalSumPerPerson)"
+        print(finalText)
   
+        self.performSegue(withIdentifier: "goToResult", sender: self)
     }
     
-
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToResult" {
+            let destinationVC = segue.destination as! ResultViewController
+            destinationVC.resultTotalSumPerPerson = totalSumPerPerson
+            destinationVC.resultText = finalText
+        }
+    }
 
 
 }
